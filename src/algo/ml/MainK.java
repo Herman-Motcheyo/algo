@@ -2,6 +2,9 @@ package algo.ml;
 
 import java.util.ArrayList;
 
+import algo.ml.kmeans.Cluster;
+import algo.ml.kmeans.Kmeans;
+
 
 public class MainK {
 
