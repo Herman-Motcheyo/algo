@@ -102,7 +102,7 @@ class Network:
         '''
         if self.control ==0:
             if (layer >=0 and layer <= len(self.layer) and nbre >0):
-                self.add_layer[layer] += nbre
+                self.layer[layer] += nbre
             else:
                 raise ValueError("error layer position or number" ,layer , nbre )
         else:
@@ -119,6 +119,42 @@ class Network:
         if self.control==0 :
             if(len(arrays)== len(self.layer)):
                 for i in range(0,len(self.layer)):
-                    self.add_layer(i , arrays[i])
+                    self.add_neural(i , arrays[i])
             else:
                 raise ValueError("Array must have same size layer", len(self.layer))
+    
+
+    def create_network(self):
+        '''
+            this method is use to initialise all connexion between neurals
+            the (poids ) is put 0 by default
+            we are going to create complet NN each neural is connected to every other neural layer i+1
+            eventualy array of neural's value  at 0
+        '''
+        check = 0
+        for i in range(0 , len(self.layer)):
+            if (self.layer[i]  <= 0): #we check if every layer have minimun 1 neural
+                print("layer",self.layer[i],"must contains (au moins) one neural")
+                check = 1
+        
+        if check != 1 :
+            if (self.control==0):
+                self.control = 1
+                for i in range(0 , len(self.layer)): #we create all connexion to every layer
+                    add = []
+                    add_link = []
+                    add_values = []
+                    for j in range(0 , self.layer[i]):
+                        if (i != len(self.layer )-1):
+                            for k in range(0, self.layer[i+1]):
+                                add_link.append(0.5) #all poids with 0.5
+                            add.append(add_link)
+                            add_link = []
+                        add_values.append(0)
+                    if( i != len(self.layer)-1):
+                        self.link.append(add)
+                    self.values.append(add_values)
+            else:
+                raise  ValueError('NN is already initialize')
+        else:
+            ValueError("You can not launch l'initialization")
