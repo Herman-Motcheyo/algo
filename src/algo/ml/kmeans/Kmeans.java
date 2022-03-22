@@ -46,19 +46,73 @@ public class Kmeans {
     	return newCenter;
     }
     
+    public double mean(ArrayList<Double> attribute) {
+  	  double sum  = 0;
+  	  for (int i = 0; i < attribute.size(); i++) 
+  		  sum += attribute.get(i);
+  	  return sum/ attribute.size() ;
+    }
+
+    
+//this method is use to show to give gravity center of a set data
+    
+    // array_name.length // row
+    // array_name[0].length // col
+	public ArrayList<Double> gravityCenter(double [][] data ){
+		
+		ArrayList<Double> gravity = new ArrayList<Double>();
+		ArrayList<Double> tmp = new ArrayList<Double>();
+		for (int i = 0; i < data[0].length; i++) {
+			for (int j = 0; j < data.length; j++) {
+			tmp.add(data[j][i]);
+			}
+			gravity.add(mean(tmp));
+			tmp.clear();
+		}
+		return gravity;
+ 	}
+    
+	public double totalInertia(ArrayList<Double>gravity , double [][] data) throws Exception {
+		double sum = 0;
+		for (int i = 0; i < data.length; i++) {
+			sum += euclidienneDistance(new Cluster(gravity), data[i]) ;
+		}
+		return sum ;
+	}
+	
+	public double intraclassInertia(ArrayList<HashSet<Cluster>>  cluster , ArrayList<Double> gravity) throws Exception {
+		double sum = 0,Wi = 0;
+		for (int i = 0; i < cluster.size(); i++) {
+			if (cluster.get(i).size() != 0) {
+				Wi = 1.0 / cluster.get(i).size();
+				for (Cluster cl : cluster.get(i)) {
+					sum +=Wi * euclidienneDistance(cl, Conversion.arrayListToArray(gravity)); 
+				
+				}
+			}
+		}
+		return sum;
+	}
+	
     public void KmeansAlgorith( int n , double [][] data) throws Exception {
-    	 double dis_min,dist;
-    	 int index =0 ;
-    	 ArrayList<Cluster> ck = initialise(n); //on initialise les centres
-    	 ArrayList<HashSet<Cluster>> gk = new ArrayList<HashSet<Cluster>>(this.k);
+    	
+    	int index =0,k=0; 
+    	double dis_min,dist;
+    	double seuil = 0;
+    	double intraClassI = 0 , Iw_1;
+        ArrayList<Cluster> ck = initialise(n); //on initialise les centres
+	    ArrayList<HashSet<Cluster>> gk = new ArrayList<HashSet<Cluster>>(this.k);
+	   
     	 
     	 for (int i = 0; i < this.k; i++) {
 			gk.add(i, new HashSet<Cluster>());
 		}
+        double totalInertia = totalInertia(gravityCenter(data), data);
 
-    	 
+    	 do {
+			 k++;
     	for (int i = 0; i < data.length; i++) {
-    		  dis_min = 100000;
+    		  dis_min = 100000;// je dois modifier ca
     		for (int j = 0; j < k; j++) {
     			dist   = euclidienneDistance(T.get(j), data[i]);
     			if (dist < dis_min ) {
@@ -73,8 +127,17 @@ public class Kmeans {
     	 T.set(index, new Cluster(newcentroid));
 
 		}
-    	System.out.println(gk);
-    }
+    	//System.out.println(gk);
+    	System.out.println(intraclassInertia(gk , gravityCenter(data))+" ok ok ");
+         /* if (k==1) {
+			  totalInertia = totalInertia(gravityCenter(data), data);
+			  Iw_1 = intraClassI ;
+		  }{
+			intraClassI = intraclassInertia(gk , gravityCenter(data)) ;
+		  }*/
+
+    	 }while(totalInertia - intraClassI < seuil );
+    	}
 	//initialisation du nombre de groupe
     public void printCluster(ArrayList<HashSet<Double>> gk) {
     	
