@@ -96,10 +96,10 @@ public class Kmeans {
 	
     public void KmeansAlgorith( int n , double [][] data) throws Exception {
     	
-    	int index =0,k=0; 
+    	int index =0; 
     	double dis_min,dist;
     	double seuil = 0;
-    	double intraClassI = 0 , Iw_1;
+    	double intraClassI = 0;
         ArrayList<Cluster> ck = initialise(n); //on initialise les centres
 	    ArrayList<HashSet<Cluster>> gk = new ArrayList<HashSet<Cluster>>(this.k);
 	   
@@ -110,9 +110,9 @@ public class Kmeans {
         double totalInertia = totalInertia(gravityCenter(data), data);
 
     	 do {
-			 k++;
+			
     	for (int i = 0; i < data.length; i++) {
-    		  dis_min = 100000;// je dois modifier ca
+    		  dis_min = 100000;
     		for (int j = 0; j < k; j++) {
     			dist   = euclidienneDistance(T.get(j), data[i]);
     			if (dist < dis_min ) {
@@ -127,16 +127,12 @@ public class Kmeans {
     	 T.set(index, new Cluster(newcentroid));
 
 		}
+    	totalInertia = intraclassInertia(gk , gravityCenter(data)) ;
     	//System.out.println(gk);
     	System.out.println(intraclassInertia(gk , gravityCenter(data))+" ok ok ");
-         /* if (k==1) {
-			  totalInertia = totalInertia(gravityCenter(data), data);
-			  Iw_1 = intraClassI ;
-		  }{
-			intraClassI = intraclassInertia(gk , gravityCenter(data)) ;
-		  }*/
-
+     
     	 }while(totalInertia - intraClassI < seuil );
+    	 
     	}
 	//initialisation du nombre de groupe
     public void printCluster(ArrayList<HashSet<Double>> gk) {
