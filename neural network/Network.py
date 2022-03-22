@@ -158,3 +158,7 @@ class Network:
                 raise  ValueError('NN is already initialize')
         else:
             ValueError("You can not launch l'initialization")
+
+    def propagation_algorithm(self, tab):
+        '''
+        '''
